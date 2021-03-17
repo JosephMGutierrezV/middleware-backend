@@ -1,6 +1,5 @@
 const bcryptjs = require("bcryptjs");
 
-
 const Usuario = require("../models/usuario.model");
 
 const userGet = (req, res) => {

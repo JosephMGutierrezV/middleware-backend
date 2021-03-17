@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const validarCampos = require("../middlewares/validar-campos.middleware");
-const Rol = require("../models/rol.model");
+const { validateCampos } = require("../middlewares/campos.middleware");
+const { rolValidate } = require("../helpers/db.validators");
 const {
   userGet,
   userDelet,
@@ -24,13 +24,8 @@ router.post(
       .isLength({ min: 6 })
       .not()
       .isEmpty(),
-    check("rol").custom(async (rol = "") => {
-      const existRol = await Rol.findOne({ rol });
-      if (!existRol) {
-        throw new Error(`El rol ${rol}, no esta registrado en la BD.`);
-      }
-    }),
-    validarCampos,
+    check("rol").custom(rolValidate),
+    validateCampos,
   ],
   userPost
 );
