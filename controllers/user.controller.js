@@ -2,41 +2,51 @@ const bcryptjs = require("bcryptjs");
 
 const Usuario = require("../models/usuario.model");
 
-const userGet = (req, res) => {
-  const { q, nombre, api_key } = req.query;
+const userGet = async (req, res) => {
+  const { limite = 5, desde = 0 } = req.query;
+
+  const [usuarios, total] = await Promise.all([
+    Usuario.find({ estadoDb: true }).skip(Number(desde)).limit(Number(limite)),
+    Usuario.countDocuments({ estadoDb: true }),
+  ]);
+
   res.json({
-    msg: "Peticion get",
-    q,
-    nombre,
-    api_key,
+    usuarios,
+    total,
   });
 };
 
-const userPut = (req, res) => {
+const userPut = async (req, res) => {
   const id = req.params.id;
+  const { _id, password, ...resto } = req.body;
+
+  // TODO validar contra DB
+  if (password) {
+    // Encriptar contraseña
+    const salt = bcryptjs.genSaltSync();
+    resto.password = bcryptjs.hashSync(password, salt);
+  }
+
+  const usuario = await Usuario.findByIdAndUpdate(id, resto);
+
   res.json({
-    msg: "Peticion put",
-    id,
+    usuario,
   });
 };
 
-const userDelet = (req, res) => {
+const userDelet = async (req, res) => {
+  const { id } = req.params;
+
+  const usuariao = await Usuario.findByIdAndUpdate(id, { estadoDb: false });
+
   res.json({
-    msg: "Peticion delete",
+    usuariao,
   });
 };
 
 const userPost = async (req, res) => {
   const { name, mail, password, rol } = req.body;
   const usuario = new Usuario({ name, mail, password, rol });
-
-  // Validar que sea correo
-  const existEmail = await Usuario.findOne({ mail });
-  if (existEmail) {
-    return res.status(400).json({
-      msg: "Ese correo ya esta registrado.",
-    });
-  }
 
   // Encriptar contraseña
   const salt = bcryptjs.genSaltSync();

@@ -31,6 +31,15 @@ const UsuarioSchema = Schema({
   timeWithHolter: {
     type: Number,
   },
+  estadoDb: {
+    type: Boolean,
+    default: true,
+  },
 });
+
+UsuarioSchema.methods.toJSON = function () {
+  const { __v, password, ...userRest } = this.toObject();
+  return userRest;
+};
 
 module.exports = model("User", UsuarioSchema);
