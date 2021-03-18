@@ -32,8 +32,36 @@ const login = async (req, res) => {
     // Generar JWT
     const token = await generateJWT(usuario.id);
 
+    // Cambiar el estado inSession
+    usuario.inSession = true;
+
+    const usuarioInSession = await Usuario.findByIdAndUpdate(
+      usuario.id,
+      usuario
+    );
+
     res.json({
       token,
+      usuarioInSession,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      msg: "Algo salio mal al iniciar session.",
+    });
+  }
+};
+
+const validateInSession = async (req, res) => {
+  const { usuario } = req;
+
+  try {
+    if (!usuario.inSession) {
+      return res.status(401).json({
+        msg: "El usuario perdio la session.",
+      });
+    }
+    res.json({
       usuario,
     });
   } catch (error) {
@@ -44,6 +72,19 @@ const login = async (req, res) => {
   }
 };
 
+const renovarToken = async (req, res, next) => {
+  const { usuario } = req.usuario;
+
+  const token = await generateJWT(usuario.id);
+
+  res.json({
+    usuario,
+    token,
+  });
+};
+
 module.exports = {
   login,
+  renovarToken,
+  validateInSession,
 };

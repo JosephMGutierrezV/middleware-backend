@@ -1,8 +1,7 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const { login } = require("../controllers/auth.controller");
-const { validateCampos } = require("../middlewares/campos.middleware");
-
+const { login, validateInSession } = require("../controllers/auth.controller");
+const { validateCampos, validateJWT } = require("../middlewares");
 const router = Router();
 
 router.post(
@@ -15,5 +14,7 @@ router.post(
   ],
   login
 );
+
+router.get("/valid-user", validateJWT, validateInSession);
 
 module.exports = router;

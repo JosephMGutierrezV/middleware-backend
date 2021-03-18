@@ -35,6 +35,10 @@ const UsuarioSchema = Schema({
     type: Boolean,
     default: true,
   },
+  inSession: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UsuarioSchema.methods.toJSON = function () {

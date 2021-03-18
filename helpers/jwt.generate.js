@@ -9,7 +9,7 @@ const generateJWT = (uid = "") => {
       payLoad,
       process.env.SECRET_PRIVATE_KEY,
       {
-        expiresIn: "1h",
+        expiresIn: "12h",
       },
       (err, token) => {
         if (err) {

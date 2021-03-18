@@ -10,9 +10,9 @@ class serverClass {
     this.server = require("http").createServer(this.app);
     this.io = require("socket.io")(this.server, {
       cors: {
-        origin: "http://localhost:4200",
+        origin: "*",
         methods: ["GET", "POST"],
-        allowedHeaders: ["my-custom-header"],
+        allowedHeaders: ["socket-headerc"],
         credentials: true,
       },
     });
@@ -34,7 +34,7 @@ class serverClass {
 
   socket() {
     console.log("Escuchando sockets...");
-    this.io.on("connection", socketController);
+    this.io.on("connection", socketController, this.io);
   }
 
   async conectDb() {
@@ -47,7 +47,7 @@ class serverClass {
   }
   middlewares() {
     // CORS
-    this.app.use(cors({ origin: "http://localhost:4200/", credentials: true }));
+    this.app.use(cors({ origin: true, credentials: true }));
 
     // Lectura y parseo
     this.app.use(express.json());
