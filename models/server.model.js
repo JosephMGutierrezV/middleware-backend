@@ -1,11 +1,21 @@
 const express = require("express");
 const cors = require("cors");
-const { dbConnection } = require("../database/config.database");
-
+const { dbConnection } = require("../database/config.database.users");
+const { socketController } = require("../sockets/sockect.controller");
 class serverClass {
   constructor() {
     this.app = express();
     this.port = process.env.PORT;
+
+    this.server = require("http").createServer(this.app);
+    this.io = require("socket.io")(this.server, {
+      cors: {
+        origin: "http://localhost:4200",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["my-custom-header"],
+        credentials: true,
+      },
+    });
     this.userRoutsPath = "/api/users";
     this.authPath = "/api/auth";
 
@@ -17,6 +27,14 @@ class serverClass {
 
     // Rutas de la app
     this.routes();
+
+    // Sockets
+    this.socket();
+  }
+
+  socket() {
+    console.log("Escuchando sockets...");
+    this.io.on("connection", socketController);
   }
 
   async conectDb() {
@@ -29,7 +47,7 @@ class serverClass {
   }
   middlewares() {
     // CORS
-    this.app.use(cors());
+    this.app.use(cors({ origin: "http://localhost:4200/", credentials: true }));
 
     // Lectura y parseo
     this.app.use(express.json());
@@ -38,7 +56,7 @@ class serverClass {
     this.app.use(express.static("public"));
   }
   starServer() {
-    this.app.listen(this.port, () => {
+    this.server.listen(this.port, () => {
       console.log(`Corriendo en el puerto: ${this.port}`);
     });
   }
