@@ -8,7 +8,7 @@ const dbConnection = async () => {
       useCreateIndex: true,
       useFindAndModify: false,
     });
-    console.log("Se conecto a la base de datos...");
+    console.log("[Conectado a la base de datos {info_ecg}]");
   } catch (error) {
     console.error(error);
     throw new Error("Error al iniciar la base de datos");

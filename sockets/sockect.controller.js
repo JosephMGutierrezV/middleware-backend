@@ -37,18 +37,18 @@ const reconectarUsuario = (cliente) => {
   });
 };
 
-const configurarUsuario = (cliente) => {
-  cliente.on("configuar-usuario", (payload) => {
+const configurarUsuario = async (cliente) => {
+  cliente.on("configuar-usuario", async (payload) => {
     const token = payload.token;
     const id = cliente.id;
     console.log(`Usuario a configurar: ${id}`);
     const acccion = getUserSocket(token);
     if (!acccion) {
-      addUsuario(id, token);
+      await addUsuario(id, token);
     } else {
-      deleteUser(id);
+      await deleteUser(id);
       if (token != "ELIMINAR") {
-        addUsuario(id, token);
+        await addUsuario(id, token);
       }
     }
   });
