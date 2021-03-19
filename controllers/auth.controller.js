@@ -2,6 +2,8 @@ const bcryptjs = require("bcryptjs");
 const { generateJWT } = require("../helpers/jwt.generate");
 const Usuario = require("../models/usuario.model");
 
+const registerUser = async (req, res) => {};
+
 const login = async (req, res) => {
   const { mail, password } = req.body;
 
@@ -116,4 +118,5 @@ module.exports = {
   renovarToken,
   validateInSession,
   logoutUser,
+  registerUser,
 };
