@@ -43,7 +43,10 @@ const configurarUsuario = (cliente) => {
     const id = cliente.id;
     console.log(`Usuario a configurar: ${id}`);
     const acccion = getUserSocket(token);
-    if (acccion) {
+    if (!acccion) {
+      addUsuario(id, token);
+    } else {
+      deleteUser(id);
       addUsuario(id, token);
     }
   });
