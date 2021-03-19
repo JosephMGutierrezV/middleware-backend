@@ -1,6 +1,10 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const { login, validateInSession } = require("../controllers/auth.controller");
+const {
+  login,
+  validateInSession,
+  logoutUser,
+} = require("../controllers/auth.controller");
 const { validateCampos, validateJWT } = require("../middlewares");
 const router = Router();
 
@@ -14,6 +18,8 @@ router.post(
   ],
   login
 );
+
+router.get("/logut", validateJWT, logoutUser);
 
 router.get("/valid-user", validateJWT, validateInSession);
 

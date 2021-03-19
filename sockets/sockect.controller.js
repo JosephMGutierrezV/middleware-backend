@@ -47,7 +47,9 @@ const configurarUsuario = (cliente) => {
       addUsuario(id, token);
     } else {
       deleteUser(id);
-      addUsuario(id, token);
+      if (token != "ELIMINAR") {
+        addUsuario(id, token);
+      }
     }
   });
 };

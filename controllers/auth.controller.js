@@ -52,6 +52,34 @@ const login = async (req, res) => {
   }
 };
 
+const logoutUser = async (req, res) => {
+  const { usuario } = req;
+
+  try {
+    if (!usuario.inSession) {
+      return res.status(401).json({
+        msg: "El usuario perdio la session.",
+      });
+    }
+
+    // Cambiar el estado inSession
+    usuario.inSession = false;
+
+    const usuarioInSession = await Usuario.findByIdAndUpdate(
+      usuario.id,
+      usuario
+    );
+    res.json({
+      usuario,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      msg: "Algo salio mal al iniciar session.",
+    });
+  }
+};
+
 const validateInSession = async (req, res) => {
   const { usuario } = req;
 
@@ -87,4 +115,5 @@ module.exports = {
   login,
   renovarToken,
   validateInSession,
+  logoutUser,
 };

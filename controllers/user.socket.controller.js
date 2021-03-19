@@ -9,8 +9,8 @@ const addUsuario = async (id, token) => {
   console.log("Se guardo el usuario...");
 };
 
-const deleteUser = (id) => {
-  const usuarioSocket = UsuarioSocket.findOneAndRemove(
+const deleteUser = async (id) => {
+  const usuarioSocket = await UsuarioSocket.findOneAndRemove(
     { id: id },
     (err, docs) => {
       if (err) {
@@ -25,11 +25,12 @@ const deleteUser = (id) => {
 const updateUser = async (id, token) => {
   console.log(`Valor a actualizar: ${id}`);
   const usuarioSocket = await UsuarioSocket.findOneAndUpdate({ token }, { id });
-  console.log(`Valor anterior: ${usuarioSocket.id}`);
-  if (id === usuarioSocket.id) {
-    console.log("No se cambio el id en base.");
-  } else {
-    console.log("Se actualizo el socket.");
+  if (usuarioSocket) {
+    if (id === usuarioSocket.id) {
+      console.log("No se cambio el id en base.");
+    } else {
+      console.log("Se actualizo el socket.");
+    }
   }
 };
 
