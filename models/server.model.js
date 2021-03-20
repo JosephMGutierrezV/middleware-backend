@@ -19,6 +19,8 @@ class serverClass {
     this.userRoutsPath = "/api/users";
     this.authPath = "/api/auth";
     this.ecgPath = "/api/ecg";
+    this.holterPath = "/api/holter-user";
+    this.medicalPath = "/api/medical";
 
     // Conectar base de datos
     this.conectDb();
@@ -47,7 +49,8 @@ class serverClass {
   routes() {
     this.app.use(this.authPath, require("../routes/auth.routes"));
     this.app.use(this.ecgPath, require("../routes/ecg.routes"));
-    this.app.use(this.userRoutsPath, require("../routes/user.routes"));
+    this.app.use(this.holterPath, require("../routes/holter.routes"));
+    this.app.use(this.medicalPath, require("../routes/medico.routes"));
   }
   middlewares() {
     // CORS

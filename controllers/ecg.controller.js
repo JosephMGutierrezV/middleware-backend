@@ -1,4 +1,3 @@
-const Data_derrivada = require("../models/derrivada.model");
 const Ecg = require("../models/ecg.model");
 
 const saveEcgDb = async (req, res) => {
