@@ -18,6 +18,7 @@ class serverClass {
     });
     this.userRoutsPath = "/api/users";
     this.authPath = "/api/auth";
+    this.ecgPath = "/api/ecg";
 
     // Conectar base de datos
     this.conectDb();
@@ -34,7 +35,9 @@ class serverClass {
 
   socket() {
     console.log("Escuchando sockets...");
-    this.io.on("connection", socketController, this.io);
+    this.io.on("connection", (cliente) => {
+      socketController(cliente, this.io);
+    });
   }
 
   async conectDb() {
@@ -43,6 +46,7 @@ class serverClass {
 
   routes() {
     this.app.use(this.authPath, require("../routes/auth.routes"));
+    this.app.use(this.ecgPath, require("../routes/ecg.routes"));
     this.app.use(this.userRoutsPath, require("../routes/user.routes"));
   }
   middlewares() {

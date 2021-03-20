@@ -5,12 +5,16 @@ const {
   deleteUser,
 } = require("../controllers/user.socket.controller");
 
+const Ecg = require("../models/ecg.model");
+
 const socketController = (cliente, io) => {
   console.log(`cliente conectado: ${cliente.id}`);
 
   configurarUsuario(cliente);
 
   reconectarUsuario(cliente);
+
+  configureAndStarEcgRealTime(cliente, io);
 
   desconectar(cliente);
 };
@@ -59,6 +63,28 @@ const logoutSocket = () => {
     const id = cliente.id;
     deleteUser(id);
   });
+};
+
+const configureAndStarEcgRealTime = async (cliente, io) => {
+  console.group();
+  console.log("Entro");
+  await Ecg.watch(
+    [
+      { $match: { operationType: { $in: ["insert", "update", "replace"] } } },
+      { $project: { _id: 1, fullDocument: 1, ns: 1, documentKey: 1 } },
+    ],
+    { fullDocument: "updateLookup" }
+  ).on("change", (change) => {
+    console.log(`Algo cambio se enviara a: ${cliente.id}`, change);
+    /*TODO:
+    1. Validar con el token del socket el token y uid del usuario
+    2. Validar que sea rol medico y sea el medico encargado para emitirle la informacion
+    */
+
+    io.to(cliente.id).emit("changes", change.fullDocument);
+  });
+  console.log("Termino");
+  console.groupEnd();
 };
 
 module.exports = {

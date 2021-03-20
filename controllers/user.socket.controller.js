@@ -37,9 +37,7 @@ const updateUser = async (id, token) => {
 const getUserSocket = async (token) => {
   const usuarioSocket = await UsuarioSocket.findOne({ token });
   if (usuarioSocket) {
-    return true;
-  } else {
-    return false;
+    return usuarioSocket;
   }
 };
 
