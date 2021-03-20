@@ -9,6 +9,9 @@ const ecgSchema = Schema({
   nombre_usuario: {
     type: String,
   },
+  fecha_emision: {
+    type: Date,
+  },
   data_derrivadas: [
     {
       nombre: {
