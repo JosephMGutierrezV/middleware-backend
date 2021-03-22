@@ -20,7 +20,7 @@ class serverClass {
     this.authPath = "/api/auth";
     this.ecgPath = "/api/ecg";
     this.holterPath = "/api/holter-user";
-    this.medicalPath = "/api/medical";
+    this.medicalPath = "/api/medico";
 
     // Conectar base de datos
     this.conectDb();

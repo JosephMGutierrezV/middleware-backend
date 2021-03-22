@@ -1,7 +1,9 @@
 const bcryptjs = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const { generateJWT } = require("../helpers/jwt.generate");
 const MedicoUser = require("../models/doctor.model");
 const HolterUser = require("../models/holter.model");
+const Socket = require("../models/socket.user");
 
 const registerUserDB = async (req, res) => {
   const { mail, password, nombre_medico } = req.body;
@@ -154,10 +156,34 @@ const listarEcgsBase = async (req, res) => {
   }
 };
 
+const validarSocketHolter = async (uid, uid_dispositivo) => {
+  const id = uid;
+  try {
+    const isExistSocket = await Socket.findOne({ uid: id });
+    if (!isExistSocket) {
+      return false;
+    }
+    const { uid } = jwt.verify(
+      isExistSocket.token,
+      process.env.SECRET_PRIVATE_KEY
+    );
+
+    const usuario = await MedicoUser.findById(uid);
+
+    if (!usuario) {
+      return false;
+    }
+  } catch (error) {
+    console.error(`[Error: ${error}]`);
+    return false;
+  }
+};
+
 module.exports = {
   registerUserDB,
   loginUserDB,
   logutUserDB,
   listarEcgsBase,
   listarEcgsVinculados,
+  validarSocketHolter,
 };

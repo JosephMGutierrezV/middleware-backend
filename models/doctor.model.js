@@ -20,6 +20,9 @@ const medicoSchema = Schema({
   holtres_id: {
     type: [String],
   },
+  inSession: {
+    type: Boolean,
+  },
 });
 
 medicoSchema.methods.toJSON = function () {

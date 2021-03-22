@@ -4,6 +4,7 @@ const {
   updateUser,
   deleteUser,
 } = require("../controllers/user.socket.controller");
+const { validarSocketHolter } = require("../controllers/medico.controller");
 
 const Ecg = require("../models/ecg.model");
 
@@ -15,6 +16,8 @@ const socketController = (cliente, io) => {
   reconectarUsuario(cliente);
 
   configureAndStarEcgRealTime(cliente, io);
+
+  logoutSocket(cliente);
 
   desconectar(cliente);
 };
@@ -30,38 +33,34 @@ const desconectar = (cliente) => {
 };
 
 const reconectarUsuario = (cliente) => {
-  cliente.on("check-status", (payload) => {
+  cliente.on("check-status", async (payload) => {
     const token = payload.token;
     const id = cliente.id;
-    console.log(`Cliente a renovar: ${id}`);
-    const acccion = getUserSocket(token);
+    console.log(`Renovar: ${id}`);
+    const acccion = await getUserSocket(token);
     if (acccion) {
-      updateUser(id, token);
+      await updateUser(id, token);
     }
   });
 };
 
-const configurarUsuario = async (cliente) => {
-  cliente.on("configuar-usuario", async (payload) => {
+const configurarUsuario = (cliente) => {
+  cliente.on("login", async (payload) => {
     const token = payload.token;
     const id = cliente.id;
-    console.log(`Usuario a configurar: ${id}`);
-    const acccion = getUserSocket(token);
+    console.log(`Login: ${id}`);
+    const acccion = await getUserSocket(token);
     if (!acccion) {
-      await addUsuario(id, token);
-    } else {
       await deleteUser(id);
-      if (token != "ELIMINAR") {
-        await addUsuario(id, token);
-      }
+      await addUsuario(id, token);
     }
   });
 };
 
-const logoutSocket = () => {
-  cliente.on("logout", (payload) => {
+const logoutSocket = (cliente) => {
+  cliente.on("logout", async (payload) => {
     const id = cliente.id;
-    deleteUser(id);
+    await deleteUser(id);
   });
 };
 
@@ -74,14 +73,21 @@ const configureAndStarEcgRealTime = async (cliente, io) => {
       { $project: { _id: 1, fullDocument: 1, ns: 1, documentKey: 1 } },
     ],
     { fullDocument: "updateLookup" }
-  ).on("change", (change) => {
-    console.log(`Algo cambio se enviara a: ${cliente.id}`, change);
+  ).on("change", async (change) => {
+    // console.log(`Algo cambio se enviara a: ${cliente.id}`, change);
     /*TODO:
     1. Validar con el token del socket el token y uid del usuario
     2. Validar que sea rol medico y sea el medico encargado para emitirle la informacion
     */
-
-    io.to(cliente.id).emit("changes", change.fullDocument);
+    const doc = change.fullDocument;
+    const { uid_dispositivo } = doc;
+    const isMedicalForSignal = await validarSocketHolter(
+      cliente.id,
+      uid_dispositivo
+    );
+    if (isMedicalForSignal) {
+      io.to(cliente.id).emit("changes", change.fullDocument);
+    }
   });
   console.log("Termino");
   console.groupEnd();

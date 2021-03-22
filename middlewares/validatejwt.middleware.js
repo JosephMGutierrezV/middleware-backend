@@ -143,7 +143,7 @@ const getValidateMedicoJWT = async (req, res, next) => {
     }
 
     // Verificar estado de usuario
-    if (!usuario.estadoDb) {
+    if (!usuario.inSession) {
       return res.status(401).json({
         msg: "Token invalido. Estado DB",
       });
@@ -182,7 +182,7 @@ const postValidateMedicoJWT = async (req, res, next) => {
     }
 
     // Verificar estado de usuario
-    if (!usuario.estadoDb) {
+    if (!usuario.inSession) {
       return res.status(401).json({
         msg: "Token invalido. Estado DB",
       });

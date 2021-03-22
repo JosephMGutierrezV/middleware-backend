@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 
 const UsuarioSocketSchema = Schema({
-  id: {
+  uid: {
     type: String,
     required: [true, "Es requerido el id."],
     unique: true,

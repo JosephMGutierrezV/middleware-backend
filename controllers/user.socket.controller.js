@@ -1,7 +1,7 @@
 const UsuarioSocket = require("../models/socket.user");
 
-const addUsuario = async (id, token) => {
-  const usuarioSocket = new UsuarioSocket({ id, token });
+const addUsuario = async (uid, token) => {
+  const usuarioSocket = new UsuarioSocket({ uid, token });
 
   // Guardar Db
   await usuarioSocket.save();
@@ -9,9 +9,9 @@ const addUsuario = async (id, token) => {
   console.log("Se guardo el usuario...");
 };
 
-const deleteUser = async (id) => {
+const deleteUser = async (uid) => {
   const usuarioSocket = await UsuarioSocket.findOneAndRemove(
-    { id: id },
+    { uid: uid },
     (err, docs) => {
       if (err) {
         console.error(err);
@@ -22,12 +22,15 @@ const deleteUser = async (id) => {
   );
 };
 
-const updateUser = async (id, token) => {
-  console.log(`Valor a actualizar: ${id}`);
-  const usuarioSocket = await UsuarioSocket.findOneAndUpdate({ token }, { id });
+const updateUser = async (uid, token) => {
+  console.log(`Valor a actualizar: ${uid}`);
+  const usuarioSocket = await UsuarioSocket.findOneAndUpdate(
+    { token },
+    { uid }
+  );
   if (usuarioSocket) {
-    if (id === usuarioSocket.id) {
-      console.log("No se cambio el id en base.");
+    if (uid === usuarioSocket.uid) {
+      console.log("No se cambio el uid en base.");
     } else {
       console.log("Se actualizo el socket.");
     }
@@ -37,8 +40,9 @@ const updateUser = async (id, token) => {
 const getUserSocket = async (token) => {
   const usuarioSocket = await UsuarioSocket.findOne({ token });
   if (usuarioSocket) {
-    return usuarioSocket;
+    return true;
   }
+  return false;
 };
 
 const getAllUsers = async () => {
