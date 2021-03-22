@@ -179,6 +179,31 @@ const validarSocketHolter = async (uid, uid_dispositivo) => {
   }
 };
 
+const guardLoginPage = async (req, res) => {
+  const { usuario } = req;
+  try {
+    const isUserInSession = await MedicoUser.findById(usuario.id);
+    if (!isUserInSession) {
+      return res.status(400).json({
+        msg: "El nombre ingresado no se encuentra en la base de datos.",
+      });
+    }
+    if (!isUserInSession.inSession) {
+      return res.status(400).json({
+        msg: "El usuario ya perdio la session.",
+      });
+    }
+    res.json({
+      succes: "true",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      succes: "false",
+      msg: `Ha ocurrido un error intente mas tarde.`,
+    });
+  }
+};
+
 module.exports = {
   registerUserDB,
   loginUserDB,
@@ -186,4 +211,5 @@ module.exports = {
   listarEcgsBase,
   listarEcgsVinculados,
   validarSocketHolter,
+  guardLoginPage,
 };

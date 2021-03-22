@@ -6,6 +6,7 @@ const {
   logutUserDB,
   listarEcgsVinculados,
   listarEcgsBase,
+  guardLoginPage,
 } = require("../controllers/medico.controller");
 const {
   validateCampos,
@@ -45,5 +46,7 @@ router.post("/auth/logout", postValidateMedicoJWT, logutUserDB);
 router.get("/get-all-ecgs", getValidateMedicoJWT, listarEcgsBase);
 router.get("/get-ecgs-vinculados", getValidateMedicoJWT, listarEcgsVinculados);
 // FIN para obtecion y listado de Usuarios o acciones
+
+router.get("/guard-login", getValidateMedicoJWT, guardLoginPage);
 
 module.exports = router;
